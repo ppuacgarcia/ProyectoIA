@@ -1,1 +1,4 @@
 # ProyectoIA
+## CARLOS CANCINOS
+## JOSE AZ
+## PABLO PUAC
