@@ -4,6 +4,8 @@ import cv2
 import pytesseract
 from gtts import gTTS
 from PIL import Image
+import time
+from os import remove
 #asegurase de Upgrade your versions of pip, setuptools and wheel.
 #para instalar playsound instalar la version pip install playsound==1.2.2
 from playsound import playsound
@@ -11,7 +13,7 @@ from playsound import playsound
 cuadro=100
 anchoCam, altoCam=640,480
 #captura de video
-cap=cv2.VideoCapture(1)
+cap=cv2.VideoCapture(0)
 cap.set(3,anchoCam)
 cap.set(4,altoCam)
 CTexto=''
@@ -21,21 +23,29 @@ def Text(image):
     def voz(FileText,lenguaje,nomFile):
         with open(FileText,"r") as lec:
             lectura=lec.read()
-        lect=gTTS(text=lectura,lang=lenguaje,slow=False)
+        print('4')
+        lect=gTTS(text=lectura.lower(),lang=lenguaje,slow=False)
+        print('5')
         nombre=nomFile
+        remove(nombre)
         lect.save(nombre)
+        print('6')
     pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
     gris=cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
     texto=pytesseract.image_to_string(gris)
     print(texto)
     dire=open('Info.txt',"w")
+    print('1')
     dire.write(texto)
+    print('2')
     dire.close()
     voz("info.txt","es","Voz.mp3")
+    print('7')
     audio='Voz.mp3'
     playsound(audio)
+    print('8')
 #-----------------------------While principal;------------
-
+inicio = time.time()
 while True:
     ret,frame=cap.read()
     if ret == False:break
@@ -50,6 +60,11 @@ while True:
     t=cv2.waitKey(1)
     if t==27:
         break
-Text(doc)
+    if ((time.time()-inicio)>=2):
+        try:
+            Text(doc)
+        except:
+            print("An exception occurred")
+        inicio = time.time()
 cap.release()
 cv2.destroyAllWindows()
